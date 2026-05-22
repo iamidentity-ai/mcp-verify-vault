@@ -7,21 +7,16 @@ Issues and PRs welcome. Two non-negotiable rules for any PR that touches prose:
 
 ## Rebuilding the cookbook PDF
 
-The per-chapter markdown in `docs/` is the source of truth. To refresh the assembled markdown after a chapter edit:
-
-```bash
-bash scripts/assemble-cookbook.sh
-```
-
-The `COOKBOOK.md` and `COOKBOOK.docx` files this produces are gitignored build artifacts — they live locally for iteration but are not tracked. To re-render the docx (so you can drop your screenshots back in and re-export the PDF):
+The per-chapter markdown in `docs/` is the source of truth. To rebuild the cookbook docx after a chapter edit, run the assemble and render scripts back-to-back:
 
 ```bash
 python3 -m venv .venv-render && source .venv-render/bin/activate
 pip install -r scripts/requirements-render.txt
+bash scripts/assemble-cookbook.sh
 python3 scripts/render-cookbook.py
 ```
 
-Then open `COOKBOOK.docx` in Word, merge your screenshots and any hand-edited formatting into your working `AgentCore-COOKBOOK-V*.docx`, and Save As PDF to overwrite the tracked `AgentCore-COOKBOOK-V*.pdf`.
+The two scripts produce a local docx (gitignored) that you can open in Word, merge your screenshots and any hand-edited formatting into your working `MCP-COOKBOOK-V*.docx`, and Save As PDF to overwrite the tracked `MCP-COOKBOOK-V*.pdf`.
 
 ## Questions
 

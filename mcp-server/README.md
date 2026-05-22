@@ -16,4 +16,4 @@ Endpoints:
 - `POST /mcp`    -- the MCP-protocol JSON-RPC endpoint the agent connects to
 - `POST /tool`   -- a simpler REST endpoint that runs the same dispatch (useful for debugging with curl)
 
-See `COOKBOOK.md` chapter 6 for the full setup and chapter 9 for the end-to-end smoke test.
+See [`docs/mcp-server-setup.md`](../docs/mcp-server-setup.md) for the full setup and [`docs/smoke-test.md`](../docs/smoke-test.md) for the end-to-end smoke test.

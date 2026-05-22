@@ -35,7 +35,7 @@ The cookbook's [Prerequisites](docs/cookbook-prereqs.md) chapter has the complet
 
 ## For contributors
 
-The PDF will be the customer artifact (once it lands); the per-chapter markdown in `docs/` is the contributor source of truth. Edit a chapter, re-run `bash scripts/assemble-cookbook.sh && python3 scripts/render-cookbook.py` to refresh the local `COOKBOOK.md` and `COOKBOOK.docx` build artifacts (both gitignored), then merge your prose into the working `.docx` with screenshots and export to PDF. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the rest of the workflow.
+The PDF will be the customer artifact (once it lands); the per-chapter markdown in `docs/` is the contributor source of truth. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the cookbook rebuild workflow.
 
 ## License
 

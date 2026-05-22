@@ -9,8 +9,6 @@ theme: jekyll-theme-cayman
 # Skip the noise — these are build artifacts and contributor scripts,
 # not pages a customer should land on.
 exclude:
-  - COOKBOOK.md
-  - COOKBOOK.docx
   - "MCP-COOKBOOK-V*.docx"
   - scripts/
   - infra/
