@@ -1,0 +1,23 @@
+# Jekyll config for GitHub Pages.
+# Pages serves the repo's markdown via Jekyll: README.md becomes the site
+# landing page; docs/*.md files become /docs/<chapter>.html.
+
+title: "Securing Your MCP Server End-to-End"
+description: "IBM Verify + HashiCorp Vault — a 30-minute hands-on cookbook that lands a working MCP server on your laptop with per-call policy authorization, step-up MFA where the policy demands it, and a 5-minute PostgreSQL credential per tool call. No AWS account required."
+theme: jekyll-theme-cayman
+
+# Skip the noise — these are build artifacts and contributor scripts,
+# not pages a customer should land on.
+exclude:
+  - COOKBOOK.md
+  - COOKBOOK.docx
+  - "MCP-COOKBOOK-V*.docx"
+  - scripts/
+  - infra/
+  - agent/
+  - mcp-server/
+  - .github/
+  - CONTRIBUTING.md
+  - "*.lock"
+  - node_modules/
+  - .gitignore

@@ -1,0 +1,46 @@
+# Local infrastructure for the mcp-verify-vault cookbook.
+# Brings up Postgres (with seeded healthcare data) and Vault (dev mode, in-memory).
+# Both bind to 127.0.0.1 by default so nothing is exposed to the host network.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: vva-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER:-vva_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:-vva_admin_local_dev_only}
+      POSTGRES_DB: ${POSTGRES_DB:-healthcare}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - ./postgres/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./postgres/02_seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_ADMIN_USER:-vva_admin} -d ${POSTGRES_DB:-healthcare}"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  vault:
+    image: hashicorp/vault:1.18
+    container_name: vva-vault
+    restart: unless-stopped
+    cap_add:
+      - IPC_LOCK
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_ROOT_TOKEN:-vva-dev-root-token}
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+      VAULT_ADDR: http://127.0.0.1:8200
+    ports:
+      - "127.0.0.1:8200:8200"
+    command:
+      - server
+      - -dev
+      - -dev-plugin-dir=/vault/plugins
+    volumes:
+      - ./vault/plugins:/vault/plugins:ro
+
+volumes:
+  postgres-data:

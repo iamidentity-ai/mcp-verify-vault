@@ -1,0 +1,29 @@
+[project]
+name = "healthcare-agent"
+version = "0.1.0"
+description = "Python + Strands + FastAPI healthcare agent for the mcp-verify-vault cookbook"
+authors = [{ name = "iamidentity.ai", email = "support@iamidentity.ai" }]
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.30.0",
+  # Strands ships LLM providers as extras. The `anthropic` extra gets you
+  # Anthropic-direct and most Bedrock-Anthropic setups out of the box.
+  "strands-agents[anthropic]>=1.13.0",
+  "mcp>=1.19.0",
+  "python-dotenv>=1.0.0",
+  "httpx>=0.28.0",
+]
+
+[project.optional-dependencies]
+# Pick LLM extras based on your LLM_PROVIDER env. See docs/llm-options.md.
+bedrock = ["boto3>=1.35.0"]
+openai = ["strands-agents[openai]>=0.4.0"]
+gemini = ["strands-agents[gemini]>=0.4.0"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["healthcare_agent*"]

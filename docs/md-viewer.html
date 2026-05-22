@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentation Viewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  :root {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --border-hover: #cbd5e1;
+    --primary: #0f62fe; /* Corporate IBM Blue */
+    --primary-hover: #0353e9;
+    --text: #0f172a;
+    --dim: #475569;
+    --dim2: #64748b;
+    --dim3: #94a3b8;
+    --mono: 'IBM Plex Mono', 'SF Mono', Monaco, monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    height: 100vh; overflow: hidden;
+    background: var(--surface); color: var(--text);
+    font-family: var(--sans); display: flex; flex-direction: column;
+  }
+
+  /* Header */
+  #header {
+    height: 60px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; background: var(--surface); flex-shrink: 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  }
+  .brand {
+    font-weight: 600; font-size: 16px; color: var(--text);
+    display: flex; align-items: center; gap: 8px; letter-spacing: -0.01em;
+  }
+  .brand svg { color: var(--primary); }
+  .btn {
+    background: var(--primary); border: 1px solid var(--primary);
+    color: #ffffff; font-size: 13px; font-family: var(--sans); font-weight: 500;
+    padding: 8px 16px; border-radius: 4px;
+    cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 1px 2px rgba(15, 98, 254, 0.2);
+  }
+  .btn:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+
+  /* Main Area */
+  #main { display: flex; flex: 1; overflow: hidden; background: var(--surface); }
+
+  /* Sidebar */
+  #sidebar {
+    width: 300px; background: var(--bg); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
+  }
+  .sidebar-header {
+    padding: 20px 20px 12px; font-size: 11px; font-family: var(--sans);
+    color: var(--dim2); font-weight: 600; letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border); text-transform: uppercase;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .file-item {
+    padding: 12px 20px; font-size: 13px; cursor: pointer; color: var(--dim);
+    border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 12px;
+    transition: all 0.15s; word-break: break-all; background: var(--surface);
+  }
+  .file-item:hover { background: #f1f5f9; color: var(--text); }
+  .file-item.active { 
+    background: #eff6ff; color: var(--primary); 
+    border-left: 3px solid var(--primary); padding-left: 17px; 
+  }
+  .file-ico { 
+    color: var(--dim3); margin-top: 2px; flex-shrink: 0; transition: color 0.15s;
+  }
+  .file-item.active .file-ico { color: var(--primary); }
+
+  /* Content */
+  #content-pane { flex: 1; background: var(--surface); overflow-y: auto; position: relative; }
+  #viewer {
+    box-sizing: border-box; min-width: 200px; max-width: 900px;
+    margin: 0 auto; padding: 50px;
+  }
+  
+  #empty-state {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; background: var(--surface); z-index: 10;
+  }
+  #empty-state h2 { color: var(--text); font-weight: 600; font-size: 20px; margin-bottom: 8px; letter-spacing: -0.01em; }
+  #empty-state p { color: var(--dim); font-size: 14px; margin-bottom: 24px; text-align: center; max-width: 440px; line-height: 1.6; }
+
+  /* Scrollbars */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div class="brand">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+    Documentation Viewer
+  </div>
+  <div>
+    <input type="file" id="folder-input" webkitdirectory directory multiple style="display:none;" onchange="handleFolderSelect(event)">
+    <button class="btn" onclick="openFolder()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+      Select Workspace
+    </button>
+  </div>
+</div>
+
+<div id="main">
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <span>Files & Resources</span>
+      <span id="file-count" style="color:var(--dim3);font-size:10px;font-weight:500;"></span>
+    </div>
+    <div id="file-list"></div>
+  </div>
+  
+  <div id="content-pane">
+    <div id="empty-state">
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--border-hover)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:20px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      <h2>No Workspace Selected</h2>
+      <p>Local HTML files require explicit permission to access your file system. Please select your documentation directory to securely load your markdown files.</p>
+      <button class="btn" style="padding:10px 24px" onclick="openFolder()">Select Workspace</button>
+    </div>
+    
+    <div id="viewer" class="markdown-body" style="display:none;"></div>
+  </div>
+</div>
+
+<script>
+let filesMap = new Map(); // path -> File object
+let currentPath = '';
+
+marked.setOptions({
+  gfm: true,
+  breaks: true
+});
+
+const docIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`;
+
+async function openFolder() {
+  if (window.showDirectoryPicker) {
+    try {
+      const dirHandle = await window.showDirectoryPicker();
+      filesMap.clear();
+      await scanDirectory(dirHandle, '');
+      renderSidebar();
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.error('Error accessing directory:', err);
+        // Fallback for some browsers
+        document.getElementById('folder-input').click();
+      }
+    }
+  } else {
+    // Safari / Older browsers fallback
+    document.getElementById('folder-input').click();
+  }
+}
+
+function handleFolderSelect(event) {
+  const files = event.target.files;
+  if (!files || files.length === 0) return;
+  filesMap.clear();
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    if (file.name.endsWith('.md') || file.name.endsWith('.markdown')) {
+      // webkitRelativePath contains the full path including the selected folder
+      filesMap.set(file.webkitRelativePath || file.name, file);
+    }
+  }
+  renderSidebar();
+  event.target.value = ''; // Reset for next time
+}
+
+async function scanDirectory(dirHandle, path) {
+  for await (const entry of dirHandle.values()) {
+    if (entry.kind === 'file') {
+      if (entry.name.endsWith('.md') || entry.name.endsWith('.markdown')) {
+        const file = await entry.getFile();
+        filesMap.set(path + entry.name, file);
+      }
+    } else if (entry.kind === 'directory') {
+      // Skip node_modules or hidden git folders
+      if (entry.name !== 'node_modules' && entry.name !== '.git') {
+        await scanDirectory(entry, path + entry.name + '/');
+      }
+    }
+  }
+}
+
+function renderSidebar() {
+  const listEl = document.getElementById('file-list');
+  listEl.innerHTML = '';
+  document.getElementById('file-count').textContent = filesMap.size + ' FILES';
+  
+  if (filesMap.size === 0) {
+    listEl.innerHTML = '<div style="padding:24px;color:var(--dim);font-size:13px;text-align:center;">No Markdown (.md) files found in this workspace.</div>';
+    document.getElementById('empty-state').style.display = 'flex';
+    document.getElementById('viewer').style.display = 'none';
+    return;
+  }
+
+  // Sort files alphabetically
+  const paths = Array.from(filesMap.keys()).sort();
+
+  paths.forEach(path => {
+    const el = document.createElement('div');
+    el.className = 'file-item';
+    el.dataset.path = path;
+    
+    // Formatting the name (showing directory context if any)
+    const parts = path.split('/');
+    const name = parts.pop();
+    const dir = parts.length > 0 ? parts.join('/') + '/' : '';
+    
+    el.innerHTML = `<div class="file-ico">${docIcon}</div>
+                    <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.4;">
+                      <div style="font-weight:500;">${name}</div>
+                      ${dir ? `<div style="color:var(--dim3);font-size:11px;font-family:var(--mono);margin-top:2px;">${dir}</div>` : ''}
+                    </div>`;
+                    
+    el.onclick = () => loadFile(path, el);
+    listEl.appendChild(el);
+  });
+  
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('viewer').style.display = 'block';
+  document.getElementById('viewer').innerHTML = '<div style="color:var(--dim);text-align:center;margin-top:100px;font-family:var(--sans);font-size:15px;">Select a file from the sidebar to view its contents.</div>';
+}
+
+async function loadFile(path, el) {
+  currentPath = path;
+  
+  // Update active state in sidebar
+  document.querySelectorAll('.file-item').forEach(item => item.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  const file = filesMap.get(path);
+  if (!file) return;
+
+  try {
+    const text = await file.text();
+    const html = marked.parse(text);
+    document.getElementById('viewer').innerHTML = html;
+    document.getElementById('content-pane').scrollTop = 0;
+  } catch (err) {
+    document.getElementById('viewer').innerHTML = '<div style="color:#ef4444;padding:40px;">Error reading file.</div>';
+    console.error('File read error:', err);
+  }
+}
+
+// Intercept clicks on links inside the viewer to handle local relative navigation
+document.getElementById('viewer').addEventListener('click', (e) => {
+  const a = e.target.closest('a');
+  if (!a) return;
+  
+  const href = a.getAttribute('href');
+  // Ignore external links or anchor links
+  if (!href || href.startsWith('http') || href.startsWith('//') || href.startsWith('#') || href.startsWith('mailto:')) {
+    return;
+  }
+
+  e.preventDefault();
+  
+  // Strip off fragment anchors for path resolution (e.g. docs.md#section -> docs.md)
+  let cleanHref = href.split('#')[0];
+  if (!cleanHref) return; // Only was a fragment link, which we ignore preventing default
+
+  const targetPath = resolvePath(currentPath, cleanHref);
+  
+  if (filesMap.has(targetPath)) {
+    // Find the corresponding element in the sidebar to activate it
+    const items = document.querySelectorAll('.file-item');
+    let targetEl = null;
+    items.forEach(item => {
+      if (item.dataset.path === targetPath) targetEl = item;
+    });
+    loadFile(targetPath, targetEl);
+  } else {
+    console.warn('Link target not found in loaded directory:', targetPath);
+    alert('File not found in the currently loaded folder: ' + targetPath);
+  }
+});
+
+function resolvePath(current, relative) {
+  const currentParts = current.split('/');
+  currentParts.pop(); // remove current filename
+  
+  const relativeParts = relative.split('/');
+  for (const part of relativeParts) {
+    if (part === '.') continue;
+    if (part === '..') {
+      if (currentParts.length > 0) currentParts.pop();
+    } else {
+      currentParts.push(part);
+    }
+  }
+  return currentParts.join('/');
+}
+</script>
+</body>
+</html>

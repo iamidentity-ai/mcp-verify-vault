@@ -1,0 +1,17 @@
+{
+  "name": "vva-verify-bootstrap",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "bootstrap": "tsx bootstrap-verify.ts",
+    "rollback": "tsx bootstrap-verify.ts --rollback",
+    "probe": "tsx probe-verify.ts"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.0",
+    "@types/node": "^22.15.0"
+  }
+}
