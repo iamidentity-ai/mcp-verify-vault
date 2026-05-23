@@ -26,10 +26,10 @@ VAULT_TOKEN=hvs.<your-mcp-token>
 # Defaults that match the local stack; change only if you bind something elsewhere
 VAULT_ADDR=http://127.0.0.1:8200
 VAULT_ROLE=healthcare-records
-PG_HOST=127.0.0.1
-PG_PORT=5432
-PG_DATABASE=healthcare
-MCP_PORT=3012
+POSTGRES_HOST=127.0.0.1
+POSTGRES_PORT=5432
+POSTGRES_DB=healthcare
+PORT=3012
 ```
 
 Notice there is **no `VERIFY_TE_CLIENT_SECRET`**. The MCP server fetches that secret from Vault on the first Token Exchange call (cached in process for five minutes), at `secret/data/VERIFY_TE_CLIENT_SECRET`. The Verify bootstrap (chapter 4) wrote it there automatically when you ran with `VAULT_ADDR` + `VAULT_TOKEN` set. The MCP's Vault token policy grants `read` on that path; nothing extra to configure here.

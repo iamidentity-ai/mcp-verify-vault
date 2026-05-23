@@ -114,7 +114,7 @@ If your phone never rings, you did not get to step 3. The most common reasons ar
 
 ## If it didn't work
 
-**401 on Test 1.** The MCP server is not running, or it is running on a different port than `3012`. Check the terminal running `npm run dev` and look for the `listening on http://127.0.0.1:3012` line. If the terminal shows a different port, edit `mcp-server/.env` and set `MCP_PORT=3012` (or update `MCP=` at the top of the smoke-test script).
+**401 on Test 1.** The MCP server is not running, or it is running on a different port than `3012`. Check the terminal running `npm run dev` and look for the `listening on http://127.0.0.1:3012` line. If the terminal shows a different port, edit `mcp-server/.env` and set `PORT=3012` (or update `MCP=` at the top of the smoke-test script).
 
 **401 on Test 2.** The clinician access token is expired or for the wrong tenant. IBM Verify access tokens default to a one-hour lifetime; if more than an hour has passed since you ran the authorize flow, repeat it. If the token is fresh, the most likely cause is `VERIFY_TENANT_HOST` in `mcp-server/.env` not matching the tenant that minted the token; double-check both.
 

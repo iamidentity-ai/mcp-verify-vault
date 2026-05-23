@@ -12,7 +12,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:-vva_admin_local_dev_only}
       POSTGRES_DB: ${POSTGRES_DB:-healthcare}
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:15432:5432"
     volumes:
       - ./postgres/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
       - ./postgres/02_seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro

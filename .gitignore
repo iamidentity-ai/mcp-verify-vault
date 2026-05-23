@@ -66,3 +66,6 @@ AgentCore-COOKBOOK-V*.docx
 # agentcore.json or CDK project.
 agent/vvahealthcareagent/
 agent/uv.lock
+
+# Local-only runbooks, scratch scripts, and validation logs. Never commit.
+.local/

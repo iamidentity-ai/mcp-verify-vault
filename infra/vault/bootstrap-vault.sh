@@ -31,7 +31,7 @@ PLUGIN_BIN_NAME="vault-plugin-secrets-verify-rar"
 PLUGIN_MOUNT="verify-rar"
 PLUGIN_ROLE="healthcare-records"
 
-POSTGRES_HOST="${POSTGRES_HOST:-host.docker.internal}"
+POSTGRES_HOST="${POSTGRES_HOST:-postgres}"
 POSTGRES_PORT="${POSTGRES_PORT:-5432}"
 POSTGRES_DB="${POSTGRES_DB:-healthcare}"
 POSTGRES_ADMIN_USER="${POSTGRES_ADMIN_USER:-vva_admin}"
@@ -51,10 +51,50 @@ echo "[bootstrap] Plugin:     ${PLUGIN_BIN_NAME}"
 echo "[bootstrap] Role:       ${PLUGIN_ROLE}"
 echo ""
 
-# ── 1. Sanity-check the plugin binary is mounted in the container ────────────
+# ── 1. Ensure the plugin binary is built and mounted in the container ────────
+PLUGIN_DIR="${SCRIPT_DIR}/plugins"
+PLUGIN_LOCAL_PATH="${PLUGIN_DIR}/${PLUGIN_BIN_NAME}"
+PLUGIN_SOURCE_DIR="${VERIFY_RAR_PLUGIN_SOURCE:-${SCRIPT_DIR}/../../../verify-rar-vault-plugin}"
+
+if ! docker exec vva-vault test -x "/vault/plugins/${PLUGIN_BIN_NAME}"; then
+  echo "[bootstrap] Plugin binary not found in /vault/plugins; attempting local build."
+
+  if [ ! -d "${PLUGIN_SOURCE_DIR}" ]; then
+    echo "ERROR: ${PLUGIN_SOURCE_DIR} not found."
+    echo "       Set VERIFY_RAR_PLUGIN_SOURCE=/path/to/verify-rar-vault-plugin, or copy ${PLUGIN_BIN_NAME} into infra/vault/plugins/."
+    echo "       See infra/vault/docs/PLUGINS.md for details."
+    exit 1
+  fi
+
+  if ! command -v go >/dev/null 2>&1; then
+    echo "ERROR: Go is required to build ${PLUGIN_BIN_NAME}, but go was not found on PATH."
+    echo "       Install Go, or copy a prebuilt Linux binary into infra/vault/plugins/."
+    exit 1
+  fi
+
+  VAULT_UNAME_M=$(docker exec vva-vault uname -m)
+  case "${VAULT_UNAME_M}" in
+    aarch64|arm64) PLUGIN_GOARCH=arm64 ;;
+    x86_64|amd64) PLUGIN_GOARCH=amd64 ;;
+    *)
+      echo "ERROR: Unsupported Vault container architecture: ${VAULT_UNAME_M}"
+      exit 1
+      ;;
+  esac
+
+  mkdir -p "${PLUGIN_DIR}"
+  echo "[bootstrap] Building ${PLUGIN_BIN_NAME} for linux/${PLUGIN_GOARCH} from ${PLUGIN_SOURCE_DIR}."
+  (
+    cd "${PLUGIN_SOURCE_DIR}"
+    GOOS=linux GOARCH="${PLUGIN_GOARCH}" CGO_ENABLED=0 \
+      go build -trimpath -ldflags "-s -w" -o "${PLUGIN_LOCAL_PATH}" "./cmd/${PLUGIN_BIN_NAME}"
+  )
+  chmod +x "${PLUGIN_LOCAL_PATH}"
+fi
+
 if ! docker exec vva-vault test -x "/vault/plugins/${PLUGIN_BIN_NAME}"; then
   echo "ERROR: /vault/plugins/${PLUGIN_BIN_NAME} not found or not executable inside the vault container."
-  echo "       Build the plugin (see infra/vault/plugins/README.md) and copy the binary into infra/vault/plugins/."
+  echo "       Build the plugin (see infra/vault/docs/PLUGINS.md) and copy the binary into infra/vault/plugins/."
   exit 1
 fi
 

@@ -63,12 +63,12 @@ if ! docker exec vva-vault test -x /vault/plugins/vault-plugin-secrets-verify-ra
   exit 1
 fi
 
-# ── 5. Run Vault bootstrap (prompts for VERIFY_TENANT_URL) ───────────────────
-if [ -z "${VERIFY_TENANT_URL:-}" ]; then
+# ── 5. Run Vault bootstrap (prompts for VERIFY_TENANT_HOST) ──────────────────
+if [ -z "${VERIFY_TENANT_HOST:-}" ]; then
   echo ""
-  echo "[bootstrap-all] VERIFY_TENANT_URL is not set in the current shell."
+  echo "[bootstrap-all] VERIFY_TENANT_HOST is not set in the current shell."
   echo "Export it before running this script, e.g.:"
-  echo "  export VERIFY_TENANT_URL=https://<your-tenant>.verify.ibm.com"
+  echo "  export VERIFY_TENANT_HOST=<your-tenant>.verify.ibm.com"
   echo "  bash scripts/bootstrap-all.sh"
   exit 1
 fi
