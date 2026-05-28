@@ -54,4 +54,4 @@ You read the security story end-to-end without yet running any code. You know wh
 
 ## What you'll do next
 
-Move on to [Prerequisites](./cookbook-prereqs.md) to confirm you have Docker, Node, Python, and an IBM Verify tenant ready, then on to the implementation chapters that stand up each piece of the chain.
+Move on to [Configure IBM Verify](./verify-setup.md) to set up the tenant-side pieces: the custom attribute that detects the healthcare RAR, the access policy that triggers step-up MFA, and the two OIDC applications the rest of the chain refers back to. The README has the prereq list if you have not stood the tooling up yet.

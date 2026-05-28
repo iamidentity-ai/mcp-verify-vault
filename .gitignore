@@ -68,3 +68,14 @@ agent/vvahealthcareagent/
 
 # Local-only runbooks, scratch scripts, and validation logs. Never commit.
 .local/
+
+# Cookbook build scaffolding — internal contributor tooling, not customer-facing.
+# The PDF (MCP-COOKBOOK-V1.pdf once it lands) is the customer artifact. These
+# files exist only to assemble the local docx during the contributor's
+# screenshot pass; customers never see them.
+docs/cookbook-header.md
+docs/cookbook-clone.md
+docs/cookbook-prereqs.md
+scripts/assemble-cookbook.sh
+scripts/render-cookbook.py
+scripts/requirements-render.txt

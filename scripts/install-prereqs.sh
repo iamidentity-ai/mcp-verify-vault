@@ -10,7 +10,7 @@
 #   * python@3.12       (Python 3.12, for the agent venv)
 #   * jq, git, gh       (standard tooling)
 #
-# What this script does NOT install (do these yourself, see docs/cookbook-prereqs.md):
+# What this script does NOT install (do these yourself, see the README):
 #   * An IBM Verify tenant or admin API client
 #   * An Anthropic API key (or whichever LLM provider you swap to)
 #   * The IBM Verify mobile app on your phone
@@ -103,7 +103,7 @@ Next steps (one-time per fresh clone of this repo):
   cd mcp-server && npm install
   cd agent && python3.12 -m venv .venv && source .venv/bin/activate && pip install -e .
 
-You also need (see docs/cookbook-prereqs.md for the full list):
+You also need (see the README for the full prereq list):
 
   * An IBM Verify tenant + an admin API client (chapter 5 walks the click path).
   * An Anthropic API key from console.anthropic.com (set in agent/.env).
