@@ -2,6 +2,8 @@
 
 > A 30-minute hands-on walkthrough that lands a working MCP server on your laptop where every tool call is authorized by IBM Verify policy (with step-up MFA where the policy demands it) and runs under a 5-minute PostgreSQL credential that HashiCorp Vault mints fresh per call. No AWS account required.
 
+> **Cookbook 1 of 4 in the series.** Cookbook 2: [`mcp-ssf-verify-vault`](https://github.com/iamidentity-ai/mcp-ssf-verify-vault) (tenant-wide session revocation via Shared Signals). Cookbook 3: [`mcp-dpop-verify-vault`](https://github.com/iamidentity-ai/mcp-dpop-verify-vault) (DPoP-bound tokens per RFC 9449). Cookbook 4: [`mcp-tunnels-verify-vault`](https://github.com/iamidentity-ai/mcp-tunnels-verify-vault) (Anthropic-hosted Managed Agent + MCP Tunnel — no public hostname for your MCP server).
+
 ## Start here
 
 The cookbook PDF (`MCP-COOKBOOK-V1.pdf`) lands in this repo after the first customer-trial pass and is the canonical customer-facing artifact. Until it does, read the chapters under [`docs/`](docs/) in this order:
